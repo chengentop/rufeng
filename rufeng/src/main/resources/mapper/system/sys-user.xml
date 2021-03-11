@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--sysuser 映射文件 vision:1.0.0 -->
+<mapper namespace="com.rufeng.business.system.mapper.ISysUserDao">
+
+
+    <resultMap type="com.rufeng.business.system.domain.po.SysUser" id="SysUserResult">
+        <id property="userid" column="userid"/>
+        <result property="deptid" column="deptid"/>
+        <result property="username" column="username"/>
+        <result property="nickname" column="nickname"/>
+        <result property="email" column="email"/>
+        <result property="phonenumber" column="phonenumber"/>
+        <result property="sex" column="sex"/>
+        <result property="avatar" column="avatar"/>
+        <result property="password" column="password"/>
+        <result property="status" column="status"/>
+        <result property="delflag" column="delflag"/>
+        <result property="loginip" column="loginip"/>
+        <result property="logindate" column="logindate"/>
+        <result property="createby" column="createby"/>
+        <result property="createtime" column="createtime"/>
+        <result property="updateby" column="updateby"/>
+        <result property="updatetime" column="updatetime"/>
+        <result property="remark" column="remark"/>
+        <association property="dept" column="deptid" javaType="com.rufeng.business.system.domain.po.SysDept"
+                     resultMap="deptResult"/>
+        <collection property="roles" javaType="java.util.List" resultMap="RoleResult"/>
+    </resultMap>
+    <resultMap type="com.rufeng.business.system.domain.po.SysDept" id="deptResult">
+        <id property="deptid" column="deptid"/>
+        <result property="parentid" column="parentid"/>
+        <result property="deptname" column="deptname"/>
+        <result property="ordernum" column="ordernum"/>
+        <result property="leader" column="leader"/>
+        <result property="status" column="deptstatus"/>
+    </resultMap>
+
+    <resultMap type="com.rufeng.business.system.domain.po.SysRole" id="RoleResult">
+        <id property="roleid" column="roleid"/>
+        <result property="rolename" column="rolename"/>
+        <result property="rolekey" column="rolekey"/>
+        <result property="rolesort" column="rolesort"/>
+        <result property="datascope" column="datascope"/>
+        <result property="status" column="rolestatus"/>
+    </resultMap>
+
+
+    <sql id="column"> userid,deptid,username,nickname,usertype,email,phonenumber,sex,avatar,password,status,delflag,loginip,logindate,createby,createtime,updateby,updatetime,remark </sql>
+
+    <sql id="keywhere"> where userid=#{userid} </sql>
+
+    <sql id="selectUserVo">
+        select u.userid, u.deptid, u.username, u.nickname, u.email, u.avatar, u.phonenumber, u.password, u.sex, u.status, u.delflag, u.loginip, u.logindate, u.createby, u.createtime, u.remark,
+        d.deptid, d.parentid, d.deptname, d.ordernum, d.leader, d.status as deptstatus,
+        r.roleid, r.rolename, r.rolekey, r.rolesort, r.datascope, r.status as rolestatus
+        from sys_user u
+		    left join sys_dept d on u.deptid = d.deptid
+		    left join sys_user_role ur on u.userid = ur.userid
+		    left join sys_role r on r.roleid = ur.roleid
+    </sql>
+
+
+    <!-- 自定义操作 -->
+    <select id="selectUserByUserName" parameterType="String" resultMap="SysUserResult">
+        <include refid="selectUserVo"/>
+        where u.username = #{username}
+    </select>
+
+    <select id="selectByPage" resultMap="SysUserResult">
+        select u.userid, u.deptid, u.nickname, u.username, u.email, u.avatar, u.phonenumber, u.password, u.sex,
+        u.status, u.delflag, u.loginip, u.logindate, u.createby, u.createtime, u.remark, d.deptname, d.leader from
+        sys_user u
+        left join sys_dept d on u.deptid = d.deptid
+        where u.delflag = '0'
+        <if test="ew.username != null and ew.username != ''">
+            AND u.username like concat('%', #{ew.username}, '%')
+        </if>
+        <if test="ew.status != null and ew.status != ''">
+            AND u.status = #{ew.status}
+        </if>
+        <if test="ew.phonenumber != null and ew.phonenumber != ''">
+            AND u.phonenumber like concat('%', #{ew.phonenumber}, '%')
+        </if>
+        <!--        <if test="beginTime != null and beginTime != ''">&lt;!&ndash; 开始时间检索 &ndash;&gt;-->
+        <!--            AND dateformat(u.createtime,'%y%m%d') &gt;= dateformat(#{ew.beginTime},'%y%m%d')-->
+        <!--        </if>-->
+        <!--        <if test="endTime != null and endTime != ''">&lt;!&ndash; 结束时间检索 &ndash;&gt;-->
+        <!--            AND dateformat(u.createtime,'%y%m%d') &lt;= dateformat(#{ew.endTime},'%y%m%d')-->
+        <!--        </if>-->
+        <if test="ew.deptid != null and ew.deptid != 0">
+            AND (u.deptid = #{ew.deptid} OR u.deptid IN ( SELECT t.deptid FROM sys_dept t WHERE FIND_IN_SET
+            (${ew.deptid},ancestors) ))
+        </if>
+    </select>
+
+    <select id="selectUserById" parameterType="Long"  resultMap="SysUserResult">
+        select u.userid, u.deptid, u.username, u.nickname, u.email, u.avatar, u.phonenumber, u.password, u.sex, u.status, u.delflag, u.loginip, u.logindate, u.createby, u.createtime, u.remark,
+        d.deptid, d.parentid, d.deptname, d.ordernum, d.leader, d.status as deptstatus,
+        r.roleid, r.rolename, r.rolekey, r.rolesort, r.datascope, r.status as rolestatus
+        from sys_user u
+		    left join sys_dept d on u.deptid = d.deptid
+		    left join sys_user_role ur on u.userid = ur.userid
+		    left join sys_role r on r.roleid = ur.roleid
+		     where u.userid = #{userId}
+    </select>
+</mapper>

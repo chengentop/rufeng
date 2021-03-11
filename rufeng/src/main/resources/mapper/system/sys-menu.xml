@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--sysmenu 映射文件 vision:1.0.0 -->
+<mapper namespace="com.rufeng.business.system.mapper.ISysMenuDao">
+
+    <sql id="column"> menuid,menuname,parentid,ordernum,path,component,isframe,menutype,visible,status,perms,icon,createby,createtime,updateby,updatetime,remark </sql>
+
+    <sql id="keywhere"> where menuid=#{menuid} </sql>
+    <!-- 自定义操作 -->
+    <select id="selectMenuPermsByUserId" parameterType="Long" resultType="String">
+		select distinct m.perms
+		from sys_menu m
+			 left join sys_role_menu rm on m.menuid = rm.menuid
+			 left join sys_user_role ur on rm.roleid = ur.roleid
+			 left join sys_role r on r.roleid = ur.roleid
+		where m.status = '0' and r.status = '0' and ur.userid = #{userId}
+	</select>
+
+    <select id="selectMenuTreeAll" resultType="com.rufeng.business.system.domain.po.SysMenu">
+		select distinct m.menuid, m.parentid, m.menuname, m.path, m.component, m.visible, m.status, ifnull(m.perms,'') as perms, m.isframe, m.menutype, m.icon, m.ordernum, m.createtime
+		from sys_menu m where m.menutype in ('M', 'C') and m.status = 0
+		order by m.parentid, m.ordernum
+	</select>
+
+    <select id="selectMenuTreeByUserId" parameterType="Long" resultType="com.rufeng.business.system.domain.po.SysMenu">
+		select distinct m.menuid, m.parentid, m.menuname, m.path, m.component, m.visible, m.status, ifnull(m.perms,'') as perms, m.isframe, m.menutype, m.icon, m.ordernum, m.createtime
+		from sys_menu m
+			 left join sys_role_menu rm on m.menuid = rm.menuid
+			 left join sys_user_role ur on rm.roleid = ur.roleid
+			 left join sys_role ro on ur.roleid = ro.roleid
+			 left join sys_user u on ur.userid = u.userid
+		where u.userid = #{userId} and m.menutype in ('M', 'C') and m.status = 0  AND ro.status = 0
+		order by m.parentid, m.ordernum
+	</select>
+    <select id="selectMenuListByUserId" parameterType="com.rufeng.business.system.domain.po.SysMenu"
+            resultType="com.rufeng.business.system.domain.po.SysMenu">
+        select distinct m.menuid, m.parentid, m.menuname, m.path, m.component, m.visible, m.status,
+        ifnull(m.perms,'') as perms, m.isframe, m.menutype, m.icon, m.ordernum, m.createtime
+        from sys_menu m
+        left join sysrolemenu rm on m.menuid = rm.menuid
+        left join sysuserrole ur on rm.roleid = ur.roleid
+        left join sysrole ro on ur.roleid = ro.roleid
+        where ur.userid = #{params.userid}
+        <if test="menuname != null and menuname != ''">
+            AND menuname like concat('%', #{menuname}, '%')
+        </if>
+        <if test="visible != null and visible != ''">
+            AND visible = #{visible}
+        </if>
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+        order by m.parentid, m.ordernum
+    </select>
+    <select id="selectMenuListByRoleId" parameterType="Long" resultType="Integer">
+		select m.menuid, m.parentid
+		from sys_menu m
+            left join sys_role_menu rm on m.menuid = rm.menuid
+        where rm.roleid = #{roleid}
+        	and m.menuid not in (select m.parentid from sys_menu m inner join sys_role_menu rm on m.menuid = rm.menuid and rm.roleid = #{roleid})
+		order by m.parentid, m.ordernum
+	</select>
+</mapper>

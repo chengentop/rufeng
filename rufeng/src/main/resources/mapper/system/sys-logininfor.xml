@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--syslogininfor 映射文件 vision:1.0.0 -->
+<mapper namespace="com.rufeng.business.system.mapper.ISysLogininforDao">
+
+    <sql id="column"> infoid,username,ipaddr,loginlocation,browser,os,status,msg,logintime </sql>
+
+    <sql id="keywhere"> where infoid=#{infoid} </sql>
+
+    <!-- 自定义操作 -->
+
+    <update id="cleanLogininfor">
+        truncate table sys_logininfor
+    </update>
+
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--sysrole 映射文件 vision:1.0.0 -->
+<mapper namespace="com.rufeng.business.system.mapper.ISysRoleDao">
+
+    <sql id="column"> roleid,rolename,rolekey,rolesort,datascope,status,delflag,createby,createtime,updateby,updatetime,remark,menucheckstrictly </sql>
+
+    <sql id="keywhere"> where roleid=#{roleid} </sql>
+
+    <sql id="selectRoleVo">
+	    select distinct r.roleid, r.rolename, r.rolekey, r.rolesort, r.datascope,
+            r.status, r.delflag, r.createtime, r.remark,r.menucheckstrictly
+        from sys_role r
+	        left join sys_user_role ur on ur.roleid = r.roleid
+	        left join sys_user u on u.userid = ur.userid
+	        left join sys_dept d on u.deptid = d.deptid
+    </sql>
+    <!-- 自定义操作 -->
+
+    <select id="selectRolePermissionByUserId" parameterType="Long"
+            resultType="com.rufeng.business.system.domain.po.SysRole">
+        <include refid="selectRoleVo"/>
+        WHERE r.delflag = '0' and ur.userid = #{userid}
+    </select>
+
+    <select id="selectRoleListByUserId" parameterType="Long" resultType="Integer">
+		select r.roleid
+        from sys_role r
+	        left join sys_user_role ur on ur.roleid = r.roleid
+	        left join sys_user u on u.userid = ur.userid
+	    where u.userid = #{userId}
+	</select>
+
+    <select id="selectRolesByUserName" parameterType="String" resultType="com.rufeng.business.system.domain.po.SysRole">
+        <include refid="selectRoleVo"/>
+        WHERE r.delflag = '0' and u.username = #{username}
+    </select>
+
+</mapper>

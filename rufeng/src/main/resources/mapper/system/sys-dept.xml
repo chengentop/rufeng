@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--sysdept 映射文件 vision:1.0.0 -->
+<mapper namespace="com.rufeng.business.system.mapper.ISysDeptDao">
+
+    <sql id="column"> deptid,parentid,ancestors,deptname,ordernum,leader,phone,email,status,delflag,createby,createtime,updateby,updatetime </sql>
+
+    <sql id="keywhere"> where deptid=#{deptid} </sql>
+    <!-- 自定义操作 -->
+
+
+    <select id="selectDeptList" parameterType="com.rufeng.business.system.domain.po.SysDept" resultType="com.rufeng.business.system.domain.po.SysDept">
+
+        select
+        <include refid="column"/>
+        from sys_dept d
+        where d.delflag = '0'
+        <if test="parentid != null and parentid != 0">
+            AND parentid = #{parentid}
+        </if>
+        <if test="deptname != null and deptname != ''">
+            AND deptname like concat('%', #{deptname}, '%')
+        </if>
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+        <!-- 数据范围过滤 ${dataScope} -->
+
+        order by d.parentid, d.ordernum
+    </select>
+</mapper>

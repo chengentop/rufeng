@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--syspost 映射文件 vision:1.0.0 -->
+<mapper namespace="com.rufeng.business.system.mapper.ISysPostDao">
+
+    <sql id="column"> postid,postcode,postname,postsort,status,createby,createtime,updateby,updatetime,remark </sql>
+
+    <sql id="keywhere"> where postid=#{postid} </sql>
+
+    <!-- 自定义操作 -->
+    <select id="selectPostListByUserId" parameterType="Long" resultType="Integer">
+		select p.postid
+        from sys_post p
+	        left join sys_user_post up on up.postid = p.postid
+	        left join sys_user u on u.userid = up.userid
+	    where u.userid = #{userid}
+	</select>
+
+    <select id="selectPostsByUserName" parameterType="String" resultType="com.rufeng.business.system.domain.po.SysPost">
+        select p.postid, p.postname, p.postcode
+		from sys_post p
+			 left join sys_user_post up on up.postid = p.postid
+			 left join sys_user u on u.userid = up.userid
+		where u.username = #{username}
+    </select>
+
+</mapper>

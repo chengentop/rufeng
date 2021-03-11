@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<!--sysconfig 映射文件 vision:1.0.0 -->
+<mapper namespace="com.rufeng.business.system.mapper.ISysConfigDao">
+	
+	<sql id="column"> configid,configname,configkey,configvalue,configtype,createby,createtime,updateby,updatetime,remark </sql>
+	
+	<sql id="keywhere"> where configid=#{configid} </sql>
+
+	<!-- 自定义操作 -->
+	
+</mapper>

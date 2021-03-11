@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--sysdictdata 映射文件 vision:1.0.0 -->
+<mapper namespace="com.rufeng.business.system.mapper.ISysDictDataDao">
+
+    <sql id="column"> dictcode,dictsort,dictlabel,dictvalue,dicttype,cssclass,listclass,isdefault,status,createby,createtime,updateby,updatetime,remark </sql>
+
+    <sql id="keywhere"> where dictcode=#{dictcode} </sql>
+
+    <!-- 自定义操作 -->
+
+    <select id="selectDictDataByType" parameterType="String" resultType="com.rufeng.business.system.domain.po.SysDictData">
+        select
+        <include refid="column"/> from sys_dict_data
+        where status = '0' and dicttype = #{dicttype} order by dictsort asc
+    </select>
+
+
+
+</mapper>

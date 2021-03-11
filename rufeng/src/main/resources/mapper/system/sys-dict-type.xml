@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<!--sysdicttype 映射文件 vision:1.0.0 -->
+<mapper namespace="com.rufeng.business.system.mapper.ISysDictTypeDao">
+	
+	<sql id="column"> dictid,dictname,dicttype,status,createby,createtime,updateby,updatetime,remark </sql>
+	
+	<sql id="keywhere"> where dictid=#{dictid} </sql>
+
+	<!-- 自定义操作 -->
+	
+</mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--sysuserpost 映射文件 vision:1.0.0 -->
+<mapper namespace="com.rufeng.business.system.mapper.ISysUserPostDao">
+
+    <sql id="column"> userid,postid </sql>
+
+    <sql id="keywhere"> where postid=#{postid} and userid=#{userid} </sql>
+
+    <!-- 自定义操作 -->
+
+    <insert id="batchUserPost">
+        insert into sys_user_post(userid, postid) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            (#{item.userid},#{item.postid})
+        </foreach>
+    </insert>
+
+</mapper>
